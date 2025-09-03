@@ -1,37 +1,41 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { Card, Row, Col } from "react-bootstrap"
-import "../styles/GenOne.css"
+import { useParams } from "react-router-dom"
+import { Card, Row, Col, Button } from "react-bootstrap"
+import "../styles/GenerazionePage.css"
 
-const GenOne = () => {
+const GenerazionePage = () => {
+  const { id } = useParams()
   const [pokemonList, setPokemonList] = useState([])
   const [selected, setSelected] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const stored = localStorage.getItem("selectedPokemon")
-    if (stored) {
-      setSelected(JSON.parse(stored))
-    }
-  }, [])
+    const stored = localStorage.getItem(`selectedPokemonGen${id}`)
+    if (stored) setSelected(JSON.parse(stored))
+  }, [id])
 
   useEffect(() => {
-    localStorage.setItem("selectedPokemon", JSON.stringify(selected))
-  }, [selected])
+    localStorage.setItem(`selectedPokemonGen${id}`, JSON.stringify(selected))
+  }, [selected, id])
 
   useEffect(() => {
+    setLoading(true)
     axios
-      .get("https://pokeapi.co/api/v2/pokemon?limit=151")
+      .get(`https://pokeapi.co/api/v2/generation/${id}`)
       .then((response) => {
-        const fetched = response.data.results.map((p, idx) => ({
-          name: p.name,
-          number: idx + 1,
-        }))
+        const fetched = response.data.pokemon_species
+          .map((p) => {
+            const urlParts = p.url.split("/").filter(Boolean)
+            const number = parseInt(urlParts[urlParts.length - 1])
+            return { name: p.name, number }
+          })
+          .sort((a, b) => a.number - b.number)
         setPokemonList(fetched)
       })
       .catch((e) => console.log("Errore nel fetch:", e))
       .finally(() => setLoading(false))
-  }, [])
+  }, [id])
 
   const toggleSelect = (number) => {
     setSelected((prev) =>
@@ -44,7 +48,7 @@ const GenOne = () => {
   return (
     <div className="m-2">
       <h1 className="mb-4">
-        Pokémon Prima Generazione{" "}
+        Pokémon Generazione {id}{" "}
         <small className="text-muted">
           ({selected.length} / {pokemonList.length})
         </small>
@@ -89,8 +93,14 @@ const GenOne = () => {
           })}
         </Row>
       )}
+      <Button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className="scroll-top-button"
+      >
+        Torna su
+      </Button>
     </div>
   )
 }
 
-export default GenOne
+export default GenerazionePage

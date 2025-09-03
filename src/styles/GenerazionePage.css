@@ -1,0 +1,34 @@
+.pokemon-card {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.pokemon-card:hover {
+  transform: scale(1.02);
+}
+
+.pokemon-card.selected {
+  background-color: #d1e7dd;
+}
+
+h1 small {
+  font-weight: normal;
+  font-size: 1.2rem;
+  color: #6c757d;
+}
+
+.scroll-top-button {
+  display: block;
+  margin: 40px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background-color: #ffcb05;
+  color: #2a75bb;
+  transition: background-color 0.3s ease;
+}
+
+.scroll-top-button:hover {
+  background-color: #f2b807;
+}
